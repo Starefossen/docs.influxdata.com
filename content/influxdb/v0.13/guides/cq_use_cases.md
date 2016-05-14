@@ -163,24 +163,24 @@ two measurements: `orders` and `downsampled_orders`.
 
 ```bash
 > SELECT * FROM "orders" LIMIT 5
-name: orders
------------------
-time						            phone 	website
-2016-05-10T20:00:11Z		1	     6
-2016-05-10T20:00:20Z		9	     10
-2016-05-10T20:00:30Z		2	     17
-2016-05-10T20:00:40Z		3	     10
-2016-05-10T20:00:50Z		1	     15
+name: cpu
+---------
+time			                phone  website
+2016-05-13T23:00:00Z	  10     30
+2016-05-13T23:00:10Z	  12     39
+2016-05-13T23:00:20Z	  11     56
+2016-05-13T23:00:30Z	  8      34
+2016-05-13T23:00:40Z	  17     32
 
 > SELECT * FROM "food_data"."a_year"."downsampled_orders" LIMIT 5
-name: downsampled_orders
-------------------------
-time			               mean_phone		       mean_website
-2016-05-03T18:00:00Z	 4.318181818181818	 9.254545454545454
-2016-05-03T18:30:00Z	 4.318181818181818	 9.254545454545454
-2016-05-03T19:00:00Z	 4.318181818181818	 9.254545454545454
-2016-05-03T19:30:00Z	 4.318181818181818	 9.254545454545454
-2016-05-03T20:00:00Z	 4.318181818181818	 9.254545454545454
+name: downsampled_cpu
+---------------------
+time			                mean_phone  mean_website
+2016-05-13T15:00:00Z	  12          23
+2016-05-13T15:30:00Z	  13          32
+2016-05-13T16:00:00Z	  19          21
+2016-05-13T16:30:00Z	  3           26
+2016-05-13T17:00:00Z	  4           23
 ```
 
 The data in `orders` are the raw, ten-second level data that are subject to the
@@ -191,9 +191,9 @@ are subject to the 52-weeks RP.
 Notice that the first timestamps in `downsample_orders` are older than the first
 timestamps in `orders`.
 This is because InfluxDB has already deleted data from `orders` that are older
-than two hours (assume we executed the `SELECT` query at
-`2016-05-10T22:00:11Z`).
-InfluxDB will only start dropping data from `downsampled_orders` after one year.
+than two hours (assume we executed the `SELECT` queries at
+`2016-05-13T00:59:59Z`).
+InfluxDB will only start dropping data from `downsampled_orders` after 52 weeks.
 
 > **Notes:**
 >
@@ -206,8 +206,8 @@ data that are subject to an RP other than the `DEFAULT` RP.
 have data that are older than two hours between checks.
 The rate at which InfluxDB checks to enforce an RP is a configurable setting, see [Database Configuration](/influxdb/v0.13/administration/config/#check-interval-30m0s).
 
-Using a combination of RPs and CQs, we've made InfluxDB automatically downsample
-data and expire old data.
+Using a combination of RPs and CQs, we've automatically downsampled data and
+expired old data.
 Now that you have a general understanding of how these features can work
 together, we recommend looking at the detailed documentation on [CQs](/influxdb/v0.13/query_language/continuous_queries/) and [RPs](/influxdb/v0.13/query_language/database_management/#retention-policy-management)
 to see all that they can do for you.
